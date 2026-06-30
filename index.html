@@ -27,7 +27,7 @@
         </div>
     </header>
 
-    <main class="p-4 space-y-5">
+    <main id="home-view" class="p-4 space-y-5">
         <section class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
             <h2 class="text-sm text-gray-500 font-semibold uppercase tracking-wider mb-3">Live Room Status</h2>
             <div class="flex justify-between items-center">
@@ -117,145 +117,25 @@
         </section>
     </main>
 
-    <nav class="fixed bottom-0 w-full max-w-[400px] bg-white border-t border-gray-200 px-6 py-3 flex justify-between items-center text-gray-400 z-20">
-        <div class="flex flex-col items-center text-blue-600">
-            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="text-[10px] font-bold">Home</span>
-        </div>
-    </nav>
-</div>
+    <main id="history-view" class="p-4 space-y-5 hidden">
+        <section class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800">Medical Logs</h2>
+                    <p class="text-xs text-gray-400">Locally saved lung metrics</p>
+                </div>
+                <button id="nhsExportBtn" class="bg-[#005EB8] text-white text-xs font-bold px-3 py-2 rounded-xl shadow hover:bg-blue-800 transition flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Export to NHS
+                </button>
+            </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. RATING LOGIC
-    const ratingButtons = document.querySelectorAll('.rating-btn');
-    ratingButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const val = parseInt(e.target.getAttribute('data-val'));
-            ratingButtons.forEach(b => b.classList.remove('ring-2', 'ring-offset-1'));
-            e.target.classList.add('ring-2', 'ring-offset-1');
+            <div id="historyLogsContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                <p class="text-sm text-gray-400 text-center py-8">No logged data yet. Submit a poor rating on the home screen to create a log entry.</p>
+            </div>
+        </section>
+    </main>
 
-            const aiHub = document.getElementById('aiInputHub');
-            const resultsBox = document.getElementById('aiResultsBox');
-            resultsBox.classList.add('hidden');
-
-            if (val < 3) {
-                aiHub.classList.remove('hidden');
-            } else {
-                aiHub.classList.add('hidden');
-            }
-        });
-    });
-
-    // 2. AUDIO RECORDING SIMULATION
-    const recordBtn = document.getElementById('recordBtn');
-    if(recordBtn) {
-        recordBtn.addEventListener('click', () => {
-            const text = document.getElementById('recordText');
-            const icon = document.getElementById('micIcon');
-            recordBtn.classList.add('bg-red-50', 'text-red-600', 'border-red-200');
-            icon.classList.add('pulse-animation');
-            text.innerText = "3s...";
-
-            setTimeout(() => {
-                recordBtn.classList.remove('bg-red-50', 'text-red-600', 'border-red-200');
-                recordBtn.classList.add('bg-green-50', 'text-green-700', 'border-green-200');
-                icon.classList.remove('pulse-animation');
-                text.innerText = "Saved";
-            }, 3000);
-        });
-    }
-
-    // 3. AUDIO FILE UPLOAD
-    const audioUpload = document.getElementById('audioUpload');
-    if(audioUpload) {
-        audioUpload.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const btn = document.getElementById('uploadBtn');
-                const text = document.getElementById('uploadText');
-                btn.classList.add('bg-green-50', 'text-green-700', 'border-green-300');
-                text.innerText = "Attached";
-            }
-        });
-    }
-
-    // 4. PRESENTATION MODE (MOCK AI)
-    const submitBtn = document.getElementById('submitAIBtn');
-    if(submitBtn) {
-        submitBtn.addEventListener('click', () => {
-            const submitText = document.getElementById('submitText');
-            const resultsBox = document.getElementById('aiResultsBox');
-            const patientInput = document.getElementById('symptomDetails').value;
-            
-            if (!patientInput.trim()) {
-                alert("Please enter some symptoms first!");
-                return;
-            }
-
-            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
-            submitText.innerText = "AI Processing...";
-
-            setTimeout(() => {
-                const aiResponse = {
-                    summary: "Patient experienced an acute exacerbation. Acoustic analysis confirms sub-audible wheezing matching nocturnal triggers.",
-                    rooms: [
-                        { name: "Main Bedroom", severity: "High Trigger", score: 85 },
-                        { name: "Kitchen", severity: "Mod Trigger", score: 45 }
-                    ]
-                };
-                
-                document.getElementById('llmSummaryText').innerText = aiResponse.summary;
-                
-                let heatmapHTML = '';
-                aiResponse.rooms.forEach(room => {
-                    let colorClass = room.score > 70 ? 'red' : (room.score > 40 ? 'orange' : 'yellow');
-                    heatmapHTML += `
-                    <div class="flex items-center justify-between text-xs mt-3">
-                        <span class="font-semibold text-${colorClass}-700">${room.name}</span>
-                        <span class="text-${colorClass}-500 font-bold">${room.severity}</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1">
-                        <div class="bg-${colorClass}-500 h-1.5 rounded-full" style="width: ${room.score}%"></div>
-                    </div>`;
-                });
-                
-                document.getElementById('llmHeatmapContainer').innerHTML = heatmapHTML;
-
-                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-                submitText.innerText = "Analyze My Symptoms";
-                resultsBox.classList.remove('hidden');
-            }, 1500); 
-        });
-    }
-
-    // 5. CHART.JS SETUP
-    try {
-        const ctx = document.getElementById('evaluationChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4'],
-                datasets: [
-                    { label: 'Humidity (%)', data: [72, 65, 54, 50], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.4, fill: true, yAxisID: 'y' },
-                    { label: 'Symptom Score', data: [2, 3, 4, 5], borderColor: '#10b981', borderWidth: 2, borderDash: [5, 5], tension: 0.4, yAxisID: 'y1' }
-                ]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 10, usePointStyle: true, font: { size: 10 } } } },
-                scales: {
-                    y: { type: 'linear', display: true, position: 'left', min: 40, max: 80, grid: { drawBorder: false, color: '#f3f4f6' }, ticks: { font: { size: 9 } } },
-                    y1: { type: 'linear', display: true, position: 'right', min: 1, max: 5, grid: { drawOnChartArea: false }, ticks: { font: { size: 9 } } },
-                    x: { grid: { display: false }, ticks: { font: { size: 9 } } }
-                }
-            }
-        });
-    } catch (e) {
-        console.warn("Chart.js loading delay.");
-    }
-});
-</script>
-
-</body>
-</html>
+    <nav class="fixed bottom-0 w-full max-w-[400px] bg-white border-t border-gray-200 px-12 py-3 flex justify-between items-center z-20">
+        <button id="nav-home-btn" class="flex flex-col items-center text-blue-600 transition">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2
