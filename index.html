@@ -47,19 +47,19 @@
             <h2 class="text-sm text-gray-500 font-semibold uppercase tracking-wider mb-3">Daily Lung Log</h2>
             <p class="text-sm text-gray-800 font-medium mb-4">How was your breathing at home today?</p>
             
-            <div class="flex justify-between items-center px-2 mb-2" id="rating-buttons">
-                <button class="w-10 h-10 rounded-full bg-red-100 text-red-600 font-bold hover:scale-110 transition rating-btn" data-val="1">1</button>
-                <button class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 font-bold hover:scale-110 transition rating-btn" data-val="2">2</button>
-                <button class="w-10 h-10 rounded-full bg-yellow-100 text-yellow-600 font-bold hover:scale-110 transition rating-btn" data-val="3">3</button>
-                <button class="w-10 h-10 rounded-full bg-lime-100 text-lime-600 font-bold hover:scale-110 transition rating-btn" data-val="4">4</button>
-                <button class="w-10 h-10 rounded-full bg-green-100 text-green-600 font-bold hover:scale-110 transition ring-2 ring-indigo-600 rating-btn" data-val="5">5</button>
+            <div class="flex justify-between items-center px-2 mb-2">
+                <button id="btn1" class="w-10 h-10 rounded-full bg-red-100 text-red-600 font-bold hover:scale-110 transition" onclick="setScore(1)">1</button>
+                <button id="btn2" class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 font-bold hover:scale-110 transition" onclick="setScore(2)">2</button>
+                <button id="btn3" class="w-10 h-10 rounded-full bg-yellow-100 text-yellow-600 font-bold hover:scale-110 transition" onclick="setScore(3)">3</button>
+                <button id="btn4" class="w-10 h-10 rounded-full bg-lime-100 text-lime-600 font-bold hover:scale-110 transition" onclick="setScore(4)">4</button>
+                <button id="btn5" class="w-10 h-10 rounded-full bg-green-100 text-green-600 font-bold hover:scale-110 transition" style="box-shadow: 0 0 0 3px #4f46e5;" onclick="setScore(5)">5</button>
             </div>
             <div class="flex justify-between text-xs text-gray-400 px-1 mb-4">
                 <span>Severe (Wheezing)</span>
                 <span>Clear & Easy</span>
             </div>
 
-            <div id="aiInputHub" class="mt-4 pt-4 border-t border-gray-100 space-y-4 hidden">
+            <div id="aiInputHub" class="mt-4 pt-4 border-t border-gray-100 space-y-4" style="display: none;">
                 <p class="text-xs font-bold text-red-600 uppercase tracking-wide">Symptom Tracking Triggered</p>
                 
                 <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
@@ -70,12 +70,12 @@
                 <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
                     <label class="block text-xs text-blue-800 font-semibold mb-2">Acoustic Audio Sample (Optional)</label>
                     <div class="flex gap-2">
-                        <button id="recordBtn" class="flex-1 bg-white text-indigo-600 border border-indigo-200 text-xs font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-1 hover:bg-indigo-50 transition">
+                        <button id="recordBtn" class="flex-1 bg-white text-indigo-600 border border-indigo-200 text-xs font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-1 hover:bg-indigo-50 transition" onclick="simulateRecording()">
                             <svg id="micIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                             <span id="recordText">Record Cough</span>
                         </button>
                         <div class="flex-1 relative">
-                            <input type="file" id="audioUpload" accept="audio/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            <input type="file" id="audioUpload" accept="audio/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="simulateUpload(this)">
                             <button id="uploadBtn" class="w-full bg-white text-gray-600 border border-gray-200 text-xs font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-1 hover:bg-gray-50 transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                 <span id="uploadText">Upload Audio</span>
@@ -84,13 +84,13 @@
                     </div>
                 </div>
 
-                <button id="submitAIBtn" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md flex justify-center items-center gap-2 hover:bg-indigo-700 transition active:scale-95">
+                <button id="submitAIBtn" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-md flex justify-center items-center gap-2 hover:bg-indigo-700 transition active:scale-95" onclick="runAIAnalysis()">
                     <span id="submitText">Analyze My Symptoms</span>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </button>
             </div>
 
-            <div id="aiResultsBox" class="hidden mt-6 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+            <div id="aiResultsBox" class="mt-6 bg-gray-50 rounded-xl border border-gray-200 overflow-hidden" style="display: none;">
                 <div class="bg-indigo-600 px-4 py-2 flex items-center gap-2">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span class="text-xs font-bold text-white uppercase tracking-wider">Live LLM Assessment</span>
@@ -114,4 +114,196 @@
                     <h2 class="text-sm text-gray-500 font-semibold uppercase tracking-wider">Medical History</h2>
                     <p class="text-xs text-gray-400">Saved clinical data logs</p>
                 </div>
-                <button id="nhsExportBtn" class="bg-[#005EB8] text-white text-xs font-bold px-3 py-2 rounded-xl shadow hover:bg-blue-800 transition
+                <button id="nhsExportBtn" class="bg-[#005EB8] text-white text-xs font-bold px-3 py-2 rounded-xl shadow hover:bg-blue-800 transition flex items-center gap-1" onclick="exportToNHS()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Export to NHS
+                </button>
+            </div>
+
+            <div id="historyLogsContainer" class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+                </div>
+        </section>
+
+        <section class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <h2 class="text-sm text-gray-500 font-semibold uppercase tracking-wider mb-3">30-Day Evaluation</h2>
+            <div class="relative h-40 w-full">
+                <canvas id="evaluationChart"></canvas>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+    // PRE-LOADED DATA
+    let sampleLogs = [
+        {
+            date: "01 Jul 2026",
+            score: 2,
+            note: "Woke up wheezing and tight-chested at 3 AM. Bedroom felt quite damp.",
+            summary: "Acute nocturnal breathing restriction. Environmental sensors match a 74% peak humidity surge in the Main Bedroom."
+        },
+        {
+            date: "24 Jun 2026",
+            score: 1,
+            note: "Severe coughing fit while sitting in the basement workshop area.",
+            summary: "Acoustic audio tracking confirms high-frequency asthmatic cough signatures. Recommended automatic vent ventilation cycle."
+        }
+    ];
+
+    let currentScore = 5;
+
+    // Direct HTML injection for history
+    function renderHistory() {
+        const container = document.getElementById('historyLogsContainer');
+        if (container) {
+            container.innerHTML = sampleLogs.map(log => `
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 text-xs space-y-2">
+                    <div class="flex justify-between font-bold text-gray-500">
+                        <span>${log.date}</span>
+                        <span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full">Score: ${log.score}/5</span>
+                    </div>
+                    <p class="text-gray-700"><strong class="text-gray-800">Patient Note:</strong> "${log.note}"</p>
+                    <p class="text-indigo-700 bg-indigo-50 p-2 rounded border border-indigo-100"><strong class="text-indigo-800">AI Clinical Summary:</strong> ${log.summary}</p>
+                </div>
+            `).join('');
+        }
+    }
+
+    // THE FIX: Explicit Button Toggles using hard pixel changes
+    function setScore(val) {
+        currentScore = val;
+        
+        // 1. Wipe styling from all 5 buttons directly
+        for(let i = 1; i <= 5; i++) {
+            document.getElementById('btn' + i).style.boxShadow = "none";
+        }
+        
+        // 2. Add glowing blue ring to ONLY the clicked button
+        document.getElementById('btn' + val).style.boxShadow = "0 0 0 3px #4f46e5";
+        
+        // 3. Hide any previous AI results
+        document.getElementById('aiResultsBox').style.display = 'none';
+
+        // 4. Show/Hide the text input depending on score (1, 2, 3 = show)
+        if(val <= 3) {
+            document.getElementById('aiInputHub').style.display = 'block';
+        } else {
+            document.getElementById('aiInputHub').style.display = 'none';
+        }
+    }
+
+    function simulateRecording() {
+        const recordBtn = document.getElementById('recordBtn');
+        const text = document.getElementById('recordText');
+        const icon = document.getElementById('micIcon');
+        
+        recordBtn.className = "flex-1 bg-red-50 text-red-600 border border-red-200 text-xs font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-1 transition";
+        icon.classList.add('pulse-animation');
+        text.innerText = "Recording...";
+
+        setTimeout(() => {
+            recordBtn.className = "flex-1 bg-green-50 text-green-700 border border-green-200 text-xs font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-1 transition";
+            icon.classList.remove('pulse-animation');
+            text.innerText = "Cough Saved";
+        }, 2000);
+    }
+
+    function simulateUpload(input) {
+        if (input.files[0]) {
+            document.getElementById('uploadBtn').className = "w-full bg-green-50 text-green-700 border border-green-300 text-xs font-bold py-2 rounded-lg shadow-sm flex justify-center items-center gap-1 transition";
+            document.getElementById('uploadText').innerText = "Audio Attached";
+        }
+    }
+
+    function runAIAnalysis() {
+        const patientInput = document.getElementById('symptomDetails').value;
+        if (!patientInput.trim()) {
+            alert("Please write down a quick symptom description before analyzing!");
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitAIBtn');
+        const submitText = document.getElementById('submitText');
+        const resultsBox = document.getElementById('aiResultsBox');
+
+        submitBtn.style.opacity = '0.75';
+        submitBtn.style.cursor = 'not-allowed';
+        submitText.innerText = "AI Running...";
+
+        setTimeout(() => {
+            const summaryMsg = "Patient tracked immediate upper airway restriction matching localized spore spikes.";
+            document.getElementById('llmSummaryText').innerText = summaryMsg;
+            
+            document.getElementById('llmHeatmapContainer').innerHTML = `
+                <div class="flex items-center justify-between text-xs mt-2">
+                    <span class="font-semibold text-red-700">Main Bedroom</span>
+                    <span class="text-red-500 font-bold">High Trigger</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                    <div class="bg-red-500 h-1.5 rounded-full" style="width: 85%"></div>
+                </div>
+            `;
+
+            const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            sampleLogs.unshift({
+                date: today,
+                score: currentScore,
+                note: patientInput,
+                summary: summaryMsg
+            });
+
+            renderHistory();
+
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+            submitText.innerText = "Analyze My Symptoms";
+            resultsBox.style.display = 'block';
+        }, 1000); 
+    }
+
+    function exportToNHS() {
+        let csvContent = "data:text/csv;charset=utf-8,Date,Symptom Score,Patient Self Report,AI Clinical Summary\n";
+        sampleLogs.forEach(log => {
+            let row = `"${log.date}",${log.score},"${log.note.replace(/"/g, '""')}","${log.summary.replace(/"/g, '""')}"`;
+            csvContent += row + "\n";
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "myco_vent_nhs_export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Run this the second the script loads
+    renderHistory();
+
+    // Chart Utilities (Safely contained)
+    try {
+        const ctx = document.getElementById('evaluationChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4'],
+                datasets: [
+                    { label: 'Humidity (%)', data: [72, 65, 54, 50], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', tension: 0.4, fill: true, yAxisID: 'y' },
+                    { label: 'Symptom Score', data: [2, 3, 4, 5], borderColor: '#10b981', borderWidth: 2, borderDash: [5, 5], tension: 0.4, yAxisID: 'y1' }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: true, position: 'top', labels: { boxWidth: 10, usePointStyle: true, font: { size: 10 } } } },
+                scales: {
+                    y: { type: 'linear', display: true, position: 'left', min: 40, max: 80, grid: { drawBorder: false, color: '#f3f4f6' }, ticks: { font: { size: 9 } } },
+                    y1: { type: 'linear', display: true, position: 'right', min: 1, max: 5, grid: { drawOnChartArea: false }, ticks: { font: { size: 9 } } },
+                    x: { grid: { display: false }, ticks: { font: { size: 9 } } }
+                }
+            }
+        });
+    } catch (e) { console.warn("Chart standing by."); }
+</script>
+
+</body>
+</html>
