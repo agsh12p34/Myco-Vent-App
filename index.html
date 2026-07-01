@@ -52,15 +52,15 @@
                 <button class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 font-bold hover:scale-110 transition rating-btn" data-val="2">2</button>
                 <button class="w-10 h-10 rounded-full bg-yellow-100 text-yellow-600 font-bold hover:scale-110 transition rating-btn" data-val="3">3</button>
                 <button class="w-10 h-10 rounded-full bg-lime-100 text-lime-600 font-bold hover:scale-110 transition rating-btn" data-val="4">4</button>
-                <button class="w-10 h-10 rounded-full bg-green-100 text-green-600 font-bold hover:scale-110 transition ring-2 ring-green-500 rating-btn" data-val="5">5</button>
+                <button class="w-10 h-10 rounded-full bg-green-100 text-green-600 font-bold hover:scale-110 transition ring-2 ring-indigo-600 rating-btn" data-val="5">5</button>
             </div>
             <div class="flex justify-between text-xs text-gray-400 px-1 mb-4">
                 <span>Severe (Wheezing)</span>
                 <span>Clear & Easy</span>
             </div>
 
-            <div id="aiInputHub" class="mt-4 pt-4 border-t border-gray-100 space-y-4">
-                <p class="text-xs font-bold text-gray-700 uppercase">Log Dynamic Symptoms</p>
+            <div id="aiInputHub" class="mt-4 pt-4 border-t border-gray-100 space-y-4 hidden">
+                <p class="text-xs font-bold text-red-600 uppercase tracking-wide">Symptom Tracking Required</p>
                 
                 <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
                     <label class="block text-xs text-blue-800 font-semibold mb-2">Where or when did you feel worse?</label>
@@ -173,14 +173,26 @@ document.addEventListener("DOMContentLoaded", () => {
     // Run the initial render so data is visible instantly
     renderHistory();
 
-    // --- 1. RATING BUTTON CLICK LOGIC ---
+    // --- 1. RATING BUTTON CLICK LOGIC (TOGGLES THE TEXTBOX BASED ON SCORE) ---
     const ratingButtons = document.querySelectorAll('.rating-btn');
     ratingButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             selectedRating = parseInt(e.target.getAttribute('data-val'));
-            ratingButtons.forEach(b => b.classList.remove('ring-2', 'ring-offset-1'));
-            e.target.classList.add('ring-2', 'ring-offset-1');
+            
+            // Clean active rings and apply to the clicked button
+            ratingButtons.forEach(b => b.classList.remove('ring-2', 'ring-indigo-600'));
+            e.target.classList.add('ring-2', 'ring-indigo-600');
+            
+            // Clear out any old processing boxes
             document.getElementById('aiResultsBox').classList.add('hidden');
+
+            // Toggle visibility of the text box input hub
+            const aiHub = document.getElementById('aiInputHub');
+            if (selectedRating <= 3) {
+                aiHub.classList.remove('hidden'); // Show for 1, 2, 3
+            } else {
+                aiHub.classList.add('hidden');    // Hide for 4, 5
+            }
         });
     });
 
